@@ -1,5 +1,5 @@
 * Формальная философия в Lean
-** Техническая информация
+** Установка и документация
 + [[https://lean-lang.org][Основной сайт Lean 4]]
 *** Работа с Lean
 Есть два способа:
@@ -15,8 +15,8 @@ https://lean-lang.org/install/
 + https://lean-lang.org/learn/
 + Нам нужно:
   - https://lean-lang.org/theorem_proving_in_lean4/
-  - https://leanprover-community.github.io/mathematics_in_lean/
-  - 
+  - https://leanprover-community.github.io/mathematics_in_lean/ — упор на
+    тактики и Mathlib.
 *** Списки тактик
 + https://github.com/madvorak/lean4-tactics — для начинающих.
 + https://hrmacbeth.github.io/math2001/Index_of_Tactics.html
