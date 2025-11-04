@@ -30,13 +30,19 @@ namespace Syllogism
   -- некоторые силлогизмы
 
   def Barbara {A : E → Prop}{B : E → Prop} {C : E → Prop} :
-    (all A are B) → (all B are C) → (all A are C)
+    (all A are B) →
+    (all B are C) →
+    (all A are C)
     := λ f g => λ x => (g x) ∘ (f x)
 
   def Darii {A : E → Prop}{B : E → Prop} {C : E → Prop} :
-    (all A are B) → (some C are A) → some C are B
+    (all A are B) →
+    (some C are A) →
+    some C are B
     := λ f ⟨x,⟨cx,ax⟩⟩ => ⟨x,⟨cx,f x ax⟩⟩
 
   def Celarent {A : E → Prop}{B : E → Prop} {C : E → Prop} :
-    (no A are B) → (all C are A) → no C are B
+    (no A are B) →
+    (all C are A) →
+    no C are B
     := λ f g => λ x => (f x) ∘ (g x)
