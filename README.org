@@ -23,7 +23,7 @@ https://lean-lang.org/install/
 + https://hrmacbeth.github.io/math2001/Index_of_Tactics.html
 + https://github.com/haruhisa-enomoto/mathlib4-all-tactics/blob/main/all-tactics.md
   — автоматический список; включает тактики Mathlib.
-** Примерные план занятий
+** Примерный план занятий
 + [[LeanIntro.lean]] — Введение
 + [[Logic.lean]] — Логика
 + [[Peano.lean]] — Аксиомы Пеано
