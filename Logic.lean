@@ -226,9 +226,4 @@ example {P : α → Prop} {Q : Prop} : (∀ x, P x → Q) → (∃ x, P x) → Q
 variable (men : Type) (barber : men)
 variable (shaves : men → men → Prop)
 
-example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : False :=
-  have ⟨bx, xx⟩ := h barber
-  let sbb := shaves barber barber
-  have np : sbb → False := λ x => (bx x) (xx (bx x))
-  have p : sbb := xx np
-  np p
+example (h : ∀ x : men, shaves barber x ↔ ¬ shaves x x) : False := sorry
