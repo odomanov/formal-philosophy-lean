@@ -1,8 +1,26 @@
 -- Силлогизмы.
 -- Формы суждения у Аристотеля.
--- В предикатной логике A,E,I,O это ограниченные кванторы!
 
 namespace Syllogism
+
+  -- прямая формализация --------
+
+  inductive Judgment : Type 1 where
+  | All_are : Type → Type → Judgment
+  | Some_are : Type → Type → Judgment
+
+  notation:arg "All"  x "are" y => Judgment.All_are x y
+  notation:arg "Some" x "are" y => Judgment.Some_are x y
+
+  -- правила
+  inductive T : Judgment → Prop where
+  | barbara : T (All A are B) → T (All B are C) → T (All A are C)
+  | darii   : T (All A are B) → T (Some C are A) → T (Some C are B)
+  -- и т.д.
+
+
+  -- "непрямая" формализация (вывод правил) --------
+  -- В предикатной логике A,E,I,O это ограниченные кванторы.
 
   axiom E : Type
 
