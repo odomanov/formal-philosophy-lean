@@ -180,7 +180,9 @@ theorem trans : ∀ {a b c : α}, a = b → b = c → a = c := λ ab bc => bc �
 -- док-во congrArg
 example {a₁ a₂ : α} (f : α → β) (h : a₁ = a₂) : f a₁ = f a₂ := h ▸ rfl
 
-
+-- невозможная функция
+example : x = 2 → x = 3 → False := nofun
+example : x = 2 → x = 3 → False := λ px py => nomatch px, py
 
 ----------------------------
 --== логика предикатов  ==--
