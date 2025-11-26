@@ -10,9 +10,11 @@ theorem proof_irrel {P : Prop} (p q : P) : p = q := rfl
 
 -- импликация это просто функция:
 example : ∀ {P Q : Prop}, P → Q → P := λ p => λ _ => p
+example : ∀ {P Q : Prop}, P → Q → P := λ p _ => p
 
 -- modus ponens
-theorem mp : ∀ {P Q : Prop}, (P → Q) → P → Q := id
+theorem mp : ∀ {P Q : Prop}, (P → Q) → P → Q := fun x => x
+theorem mp' : ∀ {P Q : Prop}, (P → Q) → P → Q := id
 
 example {P Q : Prop} : P → (P → Q) → Q := λ p pq => mp pq p
 example {P Q : Prop} : P → (P → Q) → Q := λ p pq => pq p
@@ -34,11 +36,19 @@ inductive False₁ : Prop where
 
 -- конъюнкция --
 
+inductive And₀ (P Q : Prop) : Prop where
+| intro (left : P) (right : Q) : And₀ P Q
+
 #print And
 structure And₁ (P Q : Prop) : Prop where
   intro ::
   left  : P
   right : Q
+
+#check And.intro
+#check And₀.intro
+#check And.left
+#check And.right
 
 #check True ∧ True
 example : (True ∧ True) = (And True True) := rfl
@@ -73,8 +83,10 @@ def Not₁ (P : Prop) : Prop := P → False
 example : ¬ False := fun x => x
 
 #check Not.elim
+#check False.elim
 #check absurd
-
+-- absurd можно доказать
+example {P : Prop} {C : Sort u} (h₁ : P) (h₂ : ¬P) : C := sorry
 
 example {P Q R : Prop} : ¬P → Q → (Q → P) → R := sorry
 
@@ -100,6 +112,11 @@ example {P Q : Prop} (h : P ∨ Q) : Q ∨ P :=
   Or.elim h
     (fun hp : P => Or.inr hp)
     (fun hq : Q => Or.inl hq)
+
+example {P Q : Prop} (h : P ∨ Q) : Q ∨ P :=
+  match h with
+  | .inl p => .inr p
+  | .inr q => .inl q
 
 
 -- iff --
@@ -133,7 +150,6 @@ theorem and_swap'''' {P Q : Prop} : P ∧ Q ↔ Q ∧ P :=
   where
   f {X Y : Prop} : X ∧ Y → Y ∧ X := fun h => ⟨h.right, h.left⟩
 
-
 example {P Q : Prop} : (P ↔ Q) → Q → P := λ h hq => h.mpr hq
 
 
@@ -150,6 +166,7 @@ def rfl₁ {α : Sort u} {a : α} : Eq a a := Eq.refl a
 
 example : 2 + 3 = 5 := rfl
 
+-- равенство функций
 def f1 : Nat → Nat := λ n => n + 2
 def f2 : Nat → Nat := (. + 2)
 example : f2 = f1 := rfl

@@ -119,10 +119,10 @@ example (p q : Prop) : p ∨ q → q ∨ p := by
 example (p q : Prop) : p ∨ q → q ∨ p := by
   intro h
   cases h
-  apply Or.inr
-  assumption
-  apply Or.inl
-  assumption
+  · apply Or.inr
+    assumption
+  · apply Or.inl
+    assumption
 
 -- cases с одним конструктором
 example (p q : Nat → Prop) : (∃ x, p x) → ∃ x, p x ∨ q x := by
@@ -146,8 +146,25 @@ def swap_sum : α ⊕ β → β ⊕ α := by
   . apply Sum.inl; assumption
   -- . rename_i b; exact .inl b
 
+-- rcases - распаковка по шаблону
 
--- Тактика contradiction
+example : a ∧ b ∧ c ∨ d → a ∨ d := by
+  intro h
+  rcases h with ⟨ha, hb, hc⟩ | hd
+  · exact .inl ha
+  · exact .inr hd
+
+example (h : a ∨ b ∨ c ∨ d) : True := by
+  rcases h with ha | hb | hc | hd
+  repeat trivial
+
+-- использование rfl
+example (h : x = 3) (h₂ : x < 4) : x < 4 := by
+  rcases h with rfl
+  guard_hyp h₂ : 3 < 4; guard_target = 3 < 4; exact h₂
+
+
+-- Тактика contradiction ----------------------------------------------------------
 
 example (p q : Prop) : p ∧ ¬ p → q := by
   intro h

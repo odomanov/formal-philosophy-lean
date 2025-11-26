@@ -23,13 +23,11 @@
 --   3) универсумы типов.
 
 
--- namespace LeanIntro
-
 -- Определения новых типов
 -- =======================
 
 -- Новые типы определяются инструкцией inductive.
--- Тип определяется конструкторами, то есть, функциями, конструирующими термы
+-- Тип определяется конструкторами, то есть, функциями(?), конструирующими термы
 -- определяемого типа.
 
 -- Например:
@@ -51,8 +49,19 @@ inductive Nat₁ : Type where
   | zero : Nat₁                        -- начальное число
   | succ : Nat₁ → Nat₁                 -- следующее число, одноместная функция
 
-inductive Nat₂ where
-| zero | succ (n : Nat₂)
+inductive Nat₂ : Type where
+  | zero : Nat₂
+  | succ (n : Nat₂) : Nat₂
+
+inductive Nat₃ where
+| zero | succ (n : Nat₃)
+
+#check Nat.zero
+
+#check zero
+open Nat
+#check zero
+
 
 -- Как видно, конструкторы имеют тип в качестве области значения. То есть они
 -- конструируют элементы типа.
@@ -64,18 +73,20 @@ def n : Nat := 5
 def bb : Bool := true
 #print bb
 
+-- theorem - спец. тип def для типов Prop.
+theorem t1 : 2 + 2 = 4 := rfl
 
 -- Два типа из универсума Prop:
+#print False
+
+inductive False₁ : Prop where
+
 #print True
 
 inductive True₁ : Prop where
 | intro : True₁
 
 #print trivial
-
-#print False
-
-inductive False₁ : Prop where
 
 
 
@@ -114,11 +125,9 @@ def f1  : Nat → Nat := λ (n : Nat) => Nat.succ (Nat.succ n)
 
 def f1' : Nat → Nat := λ (n : Nat) => .succ (.succ n)
 
-open Nat
-
 def f2 := fun (n : Nat) => succ (succ n)       -- иногда тип можно не декларировать
 def f3 := λ n => succ (succ n)
-
+def f4 := λ n => n + 2
 
 
 -- В другом способе указывается действие функции на все конструкторы её аргументов.
@@ -145,21 +154,21 @@ def add₃ : Nat → Nat → Nat
 | zero, n => n
 | succ n, m => succ (add₃ n m)
 
+def add₄ : Nat → Nat → Nat
+| 0, n => n
+| n + 1, m => (add₃ n m) + 1
+
+#print Nat.add
 
 -- Ещё пример функции.
 -- Функция f = x + 2
 def f : Nat → Nat
-| zero => succ (succ zero)             -- f(0) = 2
-| succ n => succ (succ (succ n))       -- f(n+1) = n + 3
-
--- или проще:
-def f' : Nat → Nat
 | 0 => 2
 | n + 1 => n + 3
 
 -- В данном конкретном случае можно было проще:
-def f''  : Nat → Nat | n => n + 2
-def f''' : Nat → Nat := fun n => n + 2
+def f'  : Nat → Nat | n => n + 2
+def f'' : Nat → Nat := fun n => n + 2
 
 -- Ещё немного определений
 
