@@ -35,19 +35,19 @@ theorem Ax3b : ∀ x y : Nat, succ x = succ y → x = y
 
 
 -- Ax.4
-theorem Ax4c : ∀ x : Nat, ¬ zero = succ x := by intro _ h; injection h
-#print Ax4c
+theorem Ax4₁ : ∀ x : Nat, ¬ zero = succ x := nofun
+#print Ax4₁
 
-theorem Ax4a : ∀ x : Nat, ¬ succ x = zero := by
+theorem Ax4₂ : ∀ x : Nat, ¬ zero = succ x := by intro _ h; injection h
+#print Ax4₂
+
+theorem Ax4₃ : ∀ x : Nat, ¬ succ x = zero := by
   intros x p
   cases p
-#print Ax4a
+#print Ax4₃
 
-theorem Ax4a' : ∀ x : Nat, ¬ succ x = zero := by simp
-#print Ax4a'
-
-theorem Ax4b : ∀ x : Nat, ¬ zero = succ x := nofun
-#print Ax4b
+theorem Ax4₄ : ∀ x : Nat, ¬ succ x = zero := by simp
+#print Ax4₄
 
 
 -- Ax.5
