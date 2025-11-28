@@ -2,6 +2,23 @@
 
 namespace Logic
 
+-------------------------------------
+--== Пропозициональное равенство ==--
+
+#print Eq
+inductive Eq₁ : α → α → Prop where
+  | refl (a : α) : Eq₁ a a
+
+#print rfl
+def rfl₁ {α : Sort u} {a : α} : Eq a a := Eq.refl a
+
+example : 2 + 3 = 5 := rfl
+
+-- равенство функций
+def f1 : Nat → Nat := λ n => n + 2
+def f2 : Nat → Nat := (. + 2)
+example : f2 = f1 := rfl
+
 ----------------------------------
 --== пропозициональная логика ==--
 
@@ -9,12 +26,21 @@ namespace Logic
 theorem proof_irrel {P : Prop} (p q : P) : p = q := rfl
 
 -- импликация это просто функция:
+example : ∀ {P Q : Prop}, P → Q → P := sorry
+
+
+
+
 example : ∀ {P Q : Prop}, P → Q → P := λ p => λ _ => p
-example : ∀ {P Q : Prop}, P → Q → P := λ p _ => p
 
 -- modus ponens
-theorem mp : ∀ {P Q : Prop}, (P → Q) → P → Q := fun x => x
-theorem mp' : ∀ {P Q : Prop}, (P → Q) → P → Q := id
+theorem mp : ∀ {P Q : Prop}, (P → Q) → P → Q := sorry
+
+
+
+
+theorem mp₁ : ∀ {P Q : Prop}, (P → Q) → P → Q := fun x => x
+theorem mp₂ : ∀ {P Q : Prop}, (P → Q) → P → Q := id
 
 example {P Q : Prop} : P → (P → Q) → Q := λ p pq => mp pq p
 example {P Q : Prop} : P → (P → Q) → Q := λ p pq => pq p
@@ -22,22 +48,18 @@ example {P Q : Prop} : P → (P → Q) → Q := λ p pq => pq p
 -- истина и ложь --
 
 #print True
-inductive True₁ : Prop where
-  | intro : True₁                -- чаще trivial
-
 #print trivial
-theorem trivial : True := ⟨⟩
 
+example : True := True.intro
 example : True := .intro
 example : True := trivial
 
 #print False
-inductive False₁ : Prop where
 
 -- конъюнкция --
 
 inductive And₀ (P Q : Prop) : Prop where
-| intro (left : P) (right : Q) : And₀ P Q
+| intro : (left : P) → (right : Q) → And₀ P Q
 
 #print And
 structure And₁ (P Q : Prop) : Prop where
@@ -52,10 +74,16 @@ structure And₁ (P Q : Prop) : Prop where
 
 #check True ∧ True
 example : (True ∧ True) = (And True True) := rfl
+example : True ∧ True := And.intro True.intro True.intro
+example : True ∧ True := ⟨ True.intro, True.intro ⟩
 example : True ∧ True := ⟨ .intro, .intro ⟩
 example : True ∧ True := ⟨ trivial, trivial ⟩
 
 #check And.elim
+
+example {P Q : Prop} : P ∧ Q → Q ∧ P := sorry
+
+
 
 example {P Q : Prop} : P ∧ Q → Q ∧ P := λ h => ⟨And.right h, And.left h⟩
 example {P Q : Prop} : P ∧ Q → Q ∧ P := λ h => ⟨h.right, h.left⟩
@@ -69,10 +97,6 @@ example {P Q : Prop} : P ∧ Q → Q ∧ P := λ h =>
   have hp : P := h.left
   have hq : Q := h.right
   ⟨hq,hp⟩
-example {P Q : Prop} : P ∧ Q → Q ∧ P := λ h =>
-  have hp : P := h.left
-  suffices hq : Q from ⟨hq,hp⟩
-  h.right
 
 
 -- отрицание --
@@ -84,6 +108,10 @@ example : ¬ False := fun x => x
 
 #check Not.elim
 #check False.elim
+
+-- ex falso quodlibet
+example : False → C := False.elim
+
 #check absurd
 -- absurd можно доказать
 example {P : Prop} {C : Sort u} (h₁ : P) (h₂ : ¬P) : C := sorry
@@ -103,10 +131,17 @@ inductive Or₁ (a b : Prop) : Prop where
   | inl (h : a) : Or₁ a b
   | inr (h : b) : Or₁ a b
 
+example : True ∨ False := .inl trivial
+
+example {P Q : Prop} (h : P ∨ Q) : Q ∨ P := sorry
+
 #check Or.elim
 
-example : True ∨ False := .inl .intro
-example : True ∨ False := .inl trivial
+
+
+
+
+example {P Q : Prop} (h : P ∨ Q) : Q ∨ P := Or.elim h .inr .inl
 
 example {P Q : Prop} (h : P ∨ Q) : Q ∨ P :=
   Or.elim h
@@ -150,26 +185,17 @@ theorem and_swap'''' {P Q : Prop} : P ∧ Q ↔ Q ∧ P :=
   where
   f {X Y : Prop} : X ∧ Y → Y ∧ X := fun h => ⟨h.right, h.left⟩
 
-example {P Q : Prop} : (P ↔ Q) → Q → P := λ h hq => h.mpr hq
+theorem and_swap''''' {P Q : Prop} : P ∧ Q ↔ Q ∧ P :=
+  let f {X Y : Prop} : X ∧ Y → Y ∧ X := fun h => ⟨h.right, h.left⟩
+  ⟨ f, f ⟩
+
+
+example {P Q : Prop} : (P ↔ Q) → Q → P := sorry
 
 
 
 -------------------------------------
 --== Пропозициональное равенство ==--
-
-#print Eq
-inductive Eq₁ : α → α → Prop where
-  | refl (a : α) : Eq₁ a a
-
-#print rfl
-def rfl₁ {α : Sort u} {a : α} : Eq a a := Eq.refl a
-
-example : 2 + 3 = 5 := rfl
-
--- равенство функций
-def f1 : Nat → Nat := λ n => n + 2
-def f2 : Nat → Nat := (. + 2)
-example : f2 = f1 := rfl
 
 -- Подстановка (в HoTT называется transport)
 #check Eq.subst
@@ -204,11 +230,12 @@ example : x = 2 → x = 3 → False := λ px py => nomatch px, py
 ----------------------------
 --== логика предикатов  ==--
 
+example {P Q : α → Prop} : (∀ x, P x ∧ Q x) → ∀ y, P y := sorry
+
+
+
 example {P Q : α → Prop} : (∀ x, P x ∧ Q x) → ∀ y, P y :=
   λ h : (∀ x, P x ∧ Q x) => λ y : α => (h y).left
-
-theorem eq_trans : ∀ {a b c : α}, a = b → b = c → a = c :=
-  λ ab bc => bc ▸ ab ▸ rfl
 
 #print Exists
 inductive Exists₁ {α : Sort u} (P : α → Prop) : Prop where
@@ -233,6 +260,7 @@ example {P Q : α → Prop} : (h : ∃ x, P x ∧ Q x) → ∃ x, Q x ∧ P x
 example {P Q : α → Prop} : (h : ∃ x, P x ∧ Q x) → ∃ x, Q x ∧ P x :=
   fun ⟨x, px, qx⟩ => ⟨x, qx, px⟩
 
+-- нужно ли?
 example {P Q : α → Prop} (h : ∃ x, P x ∧ Q x) : ∃ x, Q x ∧ P x :=
   ⟨h.choose, h.choose_spec.right, h.choose_spec.left⟩
 
