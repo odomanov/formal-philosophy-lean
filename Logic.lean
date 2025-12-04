@@ -59,7 +59,7 @@ example : True := trivial
 -- конъюнкция --
 
 inductive And₀ (P Q : Prop) : Prop where
-| intro : (left : P) → (right : Q) → And₀ P Q
+| intro : P → Q → And₀ P Q
 
 #print And
 structure And₁ (P Q : Prop) : Prop where
@@ -74,6 +74,13 @@ structure And₁ (P Q : Prop) : Prop where
 
 #check True ∧ True
 example : (True ∧ True) = (And True True) := rfl
+
+example : True ∧ True := sorry
+
+
+
+
+
 example : True ∧ True := And.intro True.intro True.intro
 example : True ∧ True := ⟨ True.intro, True.intro ⟩
 example : True ∧ True := ⟨ .intro, .intro ⟩
@@ -200,10 +207,12 @@ example {P Q : Prop} : (P ↔ Q) → Q → P := sorry
 -- Подстановка (в HoTT называется transport)
 #check Eq.subst
 
+example (a b : α) (P : α → Prop) (h1 : a = b) (h2 : P a) : P b := Eq.subst h1 h2
+
 example (a b : α) (P : α → Prop) (h1 : a = b) (h2 : P a) : P b := h1 ▸ h2
 
-theorem ne_false_of_self {P : Prop} : P → P ≠ False :=
-  λ p pf => pf ▸ p
+-- макрос ▸ больше, чем Eq.subst; например, он может заменять типы:
+theorem ne_false_of_self {P : Prop} : P → P ≠ False := λ p pf => pf ▸ p
 
 theorem true_ne_false : True ≠ False := sorry
 
