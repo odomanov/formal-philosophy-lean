@@ -19,7 +19,7 @@ https://lean-lang.org/install/
     тактики и Mathlib.
   - https://lean-lang.org/functional_programming_in_lean/
 *** Списки тактик
-+ https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/#tactic-ref
++ https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/
   — основная документация
 + https://github.com/madvorak/lean4-tactics — для начинающих.
 + https://hrmacbeth.github.io/math2001/Index_of_Tactics.html
