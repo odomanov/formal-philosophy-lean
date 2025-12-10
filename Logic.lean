@@ -214,7 +214,13 @@ example (a b : α) (P : α → Prop) (h1 : a = b) (h2 : P a) : P b := h1 ▸ h2
 -- макрос ▸ больше, чем Eq.subst; например, он может заменять типы:
 theorem ne_false_of_self {P : Prop} : P → P ≠ False := λ p pf => pf ▸ p
 
-theorem true_ne_false : True ≠ False := sorry
+theorem true_ne_false : True ≠ False := λ x => x ▸ trivial
+
+example : ∀ {a : α}, a = a := sorry
+example : ∀ {a b : α}, a = b → b = a := sorry
+example : ∀ {a b c : α}, a = b → b = c → a = c := sorry
+
+
 
 -- равенство это эквивалентность:
 theorem refl : ∀ {a : α}, a = a := rfl
@@ -272,6 +278,10 @@ example {P Q : α → Prop} : (h : ∃ x, P x ∧ Q x) → ∃ x, Q x ∧ P x :=
 -- нужно ли?
 example {P Q : α → Prop} (h : ∃ x, P x ∧ Q x) : ∃ x, Q x ∧ P x :=
   ⟨h.choose, h.choose_spec.right, h.choose_spec.left⟩
+
+example {P : α → Prop} {Q : Prop} : (∀ x, P x → Q) → (∃ x, P x) → Q := sorry
+
+
 
 example {P : α → Prop} {Q : Prop} : (∀ x, P x → Q) → (∃ x, P x) → Q :=
   λ f ep => let ⟨a,pa⟩ := ep; f a pa

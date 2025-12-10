@@ -44,20 +44,15 @@ example (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p := by
   · assumption
   · exact ⟨‹q›, ‹p›⟩
 
+example (p q : Prop) (pq : p ∧ q) : q ∧ p := sorry
+
+
 -- Тактики intro ----------------------------------------------------------
 
 example : ∀ a b c : α, a = b → b = c → a = c := by
   intro a b c ab bc
   rw [ab,bc]
-
-example (p q : α → Prop) : (∃ x, p x ∧ q x) → ∃ x, q x ∧ p x := by
-  intro ⟨x, hpx, hqx⟩
-  exact ⟨x, hqx, hpx⟩
-
-example (p q : α → Prop) : (∃ x, p x ∨ q x) → ∃ x, q x ∨ p x := by
-  intro
-  | ⟨x, Or.inl h⟩ => exact ⟨x, Or.inr h⟩
-  | ⟨x, Or.inr h⟩ => exact ⟨x, Or.inl h⟩
+  -- rw [ab]; assumption
 
 example : ∀ a b c : Nat, a = b → a = c → c = b := by
   intro a b c ab ac
@@ -75,6 +70,24 @@ example : ∀ a b c : Nat, a = b → a = c → c = b := by
   apply Eq.trans
   apply Eq.symm
   repeat assumption
+
+-- modus ponens
+example {P Q : Prop} : (P → Q) → P → Q := sorry
+
+-- modus tolens
+example {P Q : Prop} : (P → Q) → ¬ Q → ¬ P := sorry
+
+
+-- intro может сразу разбирать по шаблону
+example (p q : α → Prop) : (∃ x, p x ∧ q x) → ∃ x, q x ∧ p x := by
+  intro ⟨x, hpx, hqx⟩
+  exact ⟨x, hqx, hpx⟩
+
+-- даже при нескольких конструкторах
+example (p q : α → Prop) : (∃ x, p x ∨ q x) → ∃ x, q x ∨ p x := by
+  intro
+  | ⟨x, Or.inl h⟩ => exact ⟨x, Or.inr h⟩
+  | ⟨x, Or.inr h⟩ => exact ⟨x, Or.inl h⟩
 
 
 -- Тактика revert ----------------------
@@ -96,17 +109,6 @@ example (x y : Nat) (h : x = y) : y = x := by
   apply Eq.symm
   assumption
 
--- generalize
-
-example : 3 = 3 := by
-  generalize 3 = x
-  rfl
-
--- запомнить генерализацию
-example : 2 + 3 = 5 := by
-  generalize h : 3 = x
-  rw [← h]
-
 
 -- cases ----------------------------
 
@@ -123,6 +125,20 @@ example (p q : Prop) : p ∨ q → q ∨ p := by
     assumption
   · apply Or.inl
     assumption
+
+
+example : (p ∨ q) ∨ r ↔ p ∨ (q ∨ r) := sorry
+example : (p → (q → r)) ↔ (p ∧ q → r) := sorry
+example : ((p ∨ q) → r) ↔ (p → r) ∧ (q → r) := sorry
+example : ¬(p ∨ q) ↔ ¬p ∧ ¬q := sorry
+example : ¬p ∨ ¬q → ¬(p ∧ q) := sorry
+example : ¬(p ∧ ¬p) := sorry
+example : p ∧ ¬q → ¬(p → q) := sorry
+example : ¬p → (p → q) := sorry
+example : (¬p ∨ q) → (p → q) := sorry
+example : p ∨ False ↔ p := sorry
+example : p ∧ False ↔ False := sorry
+
 
 -- cases с одним конструктором
 example (p q : Nat → Prop) : (∃ x, p x) → ∃ x, p x ∨ q x := by
@@ -218,8 +234,16 @@ example (p q r : Prop) (hp : p) (hq : q) (hr : r) :
 -- rewriting -----
 
 example (x y : Nat) (p : Nat → Prop) (q : Prop) (h : q → x = y)
+        (h' : p y) (hq : q) : p x := sorry
+
+
+example (x y : Nat) (p : Nat → Prop) (q : Prop) (h : q → x = y)
         (h' : p y) (hq : q) : p x := by
   rw [h hq]; assumption
+
+example {a b : Nat} {f : Nat → Nat} (h₁ : a = b) (h₂ : f a = 0) : f b = 0 := sorry
+
+
 
 example {a b : Nat} {f : Nat → Nat} (h₁ : a = b) (h₂ : f a = 0) : f b = 0 := by
   rw [←h₁]; assumption
@@ -265,7 +289,20 @@ example (u w x y z : Nat) (h₁ : x = y + z) (h₂ : w = u + x)
   simp [*, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
 
 
+-- generalize
+
+example : 3 = 3 := by
+  generalize 3 = x
+  rfl
+
+-- запомнить генерализацию
+example : 2 + 3 = 5 := by
+  generalize h : 3 = x
+  rw [← h]
+
+
 -- Списки тактик:
+--  https://lean-lang.org/doc/reference/latest/Tactic-Proofs/Tactic-Reference/
 --  https://github.com/madvorak/lean4-tactics
 --  https://hrmacbeth.github.io/math2001/Index_of_Tactics.html
 --  https://github.com/haruhisa-enomoto/mathlib4-all-tactics/blob/main/all-tactics.md
