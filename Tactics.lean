@@ -64,6 +64,7 @@ example : ∀ a b c : Nat, a = b → a = c → c = b := by
   assumption
 
 #check Eq.trans
+#check Eq.symm
 
 example : ∀ a b c : Nat, a = b → a = c → c = b := by
   intros
@@ -126,6 +127,14 @@ example (p q : Prop) : p ∨ q → q ∨ p := by
   · apply Or.inl
     assumption
 
+-- cases с одним конструктором
+example (p q : Nat → Prop) : (∃ x, p x) → ∃ x, p x ∨ q x := by
+  intro h
+  cases h with
+  | intro x px => constructor; apply Or.inl; assumption
+  -- | intro x px => exists x; exact Or.inl px
+  -- | intro x px => exact ⟨x, .inl px⟩
+
 
 example : (p ∨ q) ∨ r ↔ p ∨ (q ∨ r) := sorry
 example : (p → (q → r)) ↔ (p ∧ q → r) := sorry
@@ -139,14 +148,6 @@ example : (¬p ∨ q) → (p → q) := sorry
 example : p ∨ False ↔ p := sorry
 example : p ∧ False ↔ False := sorry
 
-
--- cases с одним конструктором
-example (p q : Nat → Prop) : (∃ x, p x) → ∃ x, p x ∨ q x := by
-  intro h
-  cases h with
-  | intro x px => constructor; apply Or.inl; exact px
-  -- | intro x px => exists x; exact Or.inl px
-  -- | intro x px => exact ⟨x, .inl px⟩
 
 -- не только для пропозиций:
 
