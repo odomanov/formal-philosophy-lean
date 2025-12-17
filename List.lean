@@ -50,4 +50,19 @@ def foldl {α : Type u} {β : Type v} (f : α → β → α) : (init : α) → L
   | a, .nil      => a
   | a, .cons b l => foldl f (f a b) l
 
-def zip : List α → List β
+-- сумма элементов списка
+def sum : List Nat → Nat := foldl (λ x y => x + y) 0
+
+def sum' : List Nat → Nat := foldl (· + ·) 0
+
+#eval sum [0, 5, 12, 7]
+
+def zip : List α → List β → List (α × β) := sorry
+
+#print List.zip
+
+example : List.cons xs x = List.cons ys y → xs = ys ∧ x = y := by
+  intro h
+  constructor
+  · injection h
+  · injection h
