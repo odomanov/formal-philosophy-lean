@@ -54,12 +54,13 @@ example : ∀ a b c : α, a = b → b = c → a = c := by
   rw [ab,bc]
   -- rw [ab]; assumption
 
-example : ∀ a b c : Nat, a = b → a = c → c = b := by
+example : ∀ a b c : α , a = b → a = c → c = b := by
   intro a b c ab ac
   -- intros
   -- intro _ _ _ ab ac
   apply Eq.trans
   apply Eq.symm
+  -- symm               -- тактика для любых симметричных отношений
   assumption
   assumption
 
@@ -72,11 +73,37 @@ example : ∀ a b c : Nat, a = b → a = c → c = b := by
   apply Eq.symm
   repeat assumption
 
+example : ∀ a b c : Nat, a = b → a = c → c = b := by
+  intros; subst_eqs; rfl
+
+example (P Q : Prop) : P → Q → P := by
+  intros
+  assumption
+
 -- modus ponens
 example {P Q : Prop} : (P → Q) → P → Q := sorry
 
+
+
+
+example {P Q : Prop} : (P → Q) → P → Q := by
+  intros
+  apply_assumption
+  assumption
+
 -- modus tolens
 example {P Q : Prop} : (P → Q) → ¬ Q → ¬ P := sorry
+
+
+
+
+example {P Q : Prop} : (P → Q) → ¬ Q → ¬ P := by
+  unfold Not
+  intros
+  apply_assumption
+  apply_assumption
+  apply_assumption
+  -- repeat apply_assumption
 
 
 -- intro может сразу разбирать по шаблону
@@ -132,8 +159,14 @@ example (p q : Nat → Prop) : (∃ x, p x) → ∃ x, p x ∨ q x := by
   intro h
   cases h with
   | intro x px => constructor; apply Or.inl; assumption
-  -- | intro x px => exists x; exact Or.inl px
+  -- | intro x px => exists x; exact .inl px
   -- | intro x px => exact ⟨x, .inl px⟩
+
+example (h : a = b) : b = a := by
+  cases h with
+  | refl => rfl
+  -- | _ => rfl
+  -- cases h; rfl
 
 
 example : (p ∨ q) ∨ r ↔ p ∨ (q ∨ r) := sorry
@@ -148,6 +181,24 @@ example : (¬p ∨ q) → (p → q) := sorry
 example : p ∨ False ↔ p := sorry
 example : p ∧ False ↔ False := sorry
 
+open Nat in
+example (n : Nat) : pred (succ n) = n := by
+  cases n
+  · rfl
+  · simp
+
+open Nat in
+example (n : Nat) (h : n ≠ 0) : (succ (pred n)) = n := sorry
+
+
+-- cases со сложными выражениями.
+-- Nat.lt_or_ge (n m : Nat) : n < m ∨ n ≥ m
+example (p : Prop) (m n : Nat)
+        (h₁ : m < n → p) (h₂ : m ≥ n → p) : p := by
+  cases Nat.lt_or_ge m n with
+  | inl hlt => exact h₁ hlt
+  | inr hge => exact h₂ hge
+
 
 -- не только для пропозиций:
 
@@ -155,6 +206,12 @@ def swap_pair : α × β → β × α := by
   intro p
   cases p
   constructor <;> assumption
+#print swap_pair
+
+def swap_pair' : α × β → β × α := λ ⟨x,y⟩ => ⟨y,x⟩
+
+example : swap_pair = swap_pair' := rfl
+example : @swap_pair α β = @swap_pair' α β  := rfl
 
 def swap_sum : α ⊕ β → β ⊕ α := by
   intro p
@@ -178,7 +235,7 @@ example (h : a ∨ b ∨ c ∨ d) : True := by
 -- использование rfl
 example (h : x = 3) (h₂ : x < 4) : x < 4 := by
   rcases h with rfl
-  guard_hyp h₂ : 3 < 4; guard_target = 3 < 4; exact h₂
+  exact h₂
 
 
 -- Тактика contradiction ----------------------------------------------------------
@@ -187,6 +244,16 @@ example (p q : Prop) : p ∧ ¬ p → q := by
   intro h
   cases h
   contradiction
+
+-- равенство конструкторов
+example (h : Nat.zero = Nat.succ n) : p := by contradiction
+
+-- инъективность конструкторов
+example (h : Nat.succ n = Nat.succ m) : n = m := by injection h
+
+example (h : 2 + 2 = 3) : p := by contradiction
+example (h : p) (h' : ¬ p) : q := by contradiction
+example (x : Nat) (h : x ≠ x) : p := by contradiction
 
 
 -- комбинаторы тактик ------------------------
@@ -210,11 +277,9 @@ example (p q r : Prop) (hq : q) : p ∨ q ∨ r := by
 example (p q r : Prop) (hr : r) : p ∨ q ∨ r := by
   repeat (first | apply Or.inl; assumption | apply Or.inr | assumption)
 
--- try всегда успешна
+-- try всегда успешна -- repeat (try t) will loop forever !
 example (p q r : Prop) (hp : p) (hq : q) (hr : r) : p ∧ q ∧ r := by
   constructor <;> (try constructor) <;> assumption
-
--- repeat (try t) will loop forever !
 
 example (p q r : Prop) (hp : p) (hq : q) (hr : r) : p ∧ q ∧ r := by
   constructor
@@ -229,18 +294,17 @@ example (p q r : Prop) (hp : p) (hq : q) (hr : r) : p ∧ q ∧ r := by
 example (p q r : Prop) (hp : p) (hq : q) (hr : r) :
       p ∧ ((p ∧ q) ∧ r) ∧ (q ∧ r ∧ p) := by
   repeat (any_goals constructor)
+  -- repeat' constructor
   all_goals assumption
 
 
 -- rewriting -----
 
+example (x y : Nat) (p : Nat → Prop) (h : y = x) (h' : p x) : p y := by
+  rw [h]; assumption
+
 example (x y : Nat) (p : Nat → Prop) (q : Prop) (h : q → x = y)
         (h' : p y) (hq : q) : p x := sorry
-
-
-example (x y : Nat) (p : Nat → Prop) (q : Prop) (h : q → x = y)
-        (h' : p y) (hq : q) : p x := by
-  rw [h hq]; assumption
 
 example {a b : Nat} {f : Nat → Nat} (h₁ : a = b) (h₂ : f a = 0) : f b = 0 := sorry
 
@@ -258,6 +322,8 @@ example (f : Nat → Nat) (a : Nat) (h : a + 0 = 0) : f a = f 0 := by
 -- Тактики simp ----
 
 example : x + 0 = x := by simp
+example : p ∧ False ↔ False := by simp
+
 
 example (x x' y y' : Nat) (h₁ : x + 0 = x') (h₂ : y + 0 = y')
         : x + y + 0 = x' + y' := by
@@ -266,9 +332,7 @@ example (x x' y y' : Nat) (h₁ : x + 0 = x') (h₂ : y + 0 = y')
 
 attribute [local simp] Nat.mul_comm Nat.mul_assoc Nat.mul_left_comm
 attribute [local simp] Nat.add_assoc Nat.add_comm Nat.add_left_comm
-attribute [local simp] Nat.mul_comm Nat.mul_assoc Nat.mul_left_comm
-attribute [local simp] Nat.add_assoc Nat.add_comm Nat.add_left_comm
-example (w x y z : Nat) (p : Nat → Prop)
+example (w x y z : Nat)
         : x * y + z * w * x = x * w * z + y * x := by
   simp
 
@@ -300,6 +364,27 @@ example : 3 = 3 := by
 example : 2 + 3 = 5 := by
   generalize h : 3 = x
   rw [← h]
+
+-- show
+
+example (n : Nat) : n + 1 = Nat.succ n := by
+  show Nat.succ n = Nat.succ n
+  rfl
+
+-- сложные тактики
+
+example {P Q : Prop} : (P → Q) → P → Q := by solve_by_elim
+example : a = b → b = a := by solve_by_elim
+example (a b : Nat) : a + b = b + a := by solve_by_elim
+
+example (u w x y z : Nat) (h₁ : x = y + z) (h₂ : w = u + x)
+        : w = z + y + u := by solve_by_elim
+
+example {P Q : Prop} : (P → Q) → P → Q := by apply_rules only [*]
+
+example (w x y z : Nat) (p : Nat → Prop)
+        : x * y + z * w * x = x * w * z + y * x := by
+  apply_rules [Nat.mul_comm Nat.mul_assoc Nat.mul_left_comm]
 
 
 -- Списки тактик:
