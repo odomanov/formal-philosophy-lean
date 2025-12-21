@@ -208,6 +208,8 @@ example {P Q : Prop} : (P ↔ Q) → Q → P := sorry
 #check Eq.subst
 
 example (a b : α) (P : α → Prop) (h1 : a = b) (h2 : P a) : P b := Eq.subst h1 h2
+example (R : α → α → Prop) (h : x = y) (r : R z x) : R z y := Eq.subst h r
+example (R : α → α → Prop) (h : x = y) (r : R x z) : R y z := Eq.subst (motive := λ w ↦ R w z) h r
 
 example (a b : α) (P : α → Prop) (h1 : a = b) (h2 : P a) : P b := h1 ▸ h2
 
