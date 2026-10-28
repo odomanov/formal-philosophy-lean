@@ -10,7 +10,7 @@ inductive Eq₁ : α → α → Prop where
   | refl (a : α) : Eq₁ a a
 
 #print rfl
-def rfl₁ {α : Sort u} {a : α} : Eq a a := Eq.refl a
+theorem rfl₁ {α : Sort u} {a : α} : Eq a a := Eq.refl a
 
 example : 2 + 3 = 5 := rfl
 
@@ -86,8 +86,6 @@ example : True ∧ True := ⟨ True.intro, True.intro ⟩
 example : True ∧ True := ⟨ .intro, .intro ⟩
 example : True ∧ True := ⟨ trivial, trivial ⟩
 
-#check And.elim
-
 example {P Q : Prop} : P ∧ Q → Q ∧ P := sorry
 
 
@@ -101,24 +99,28 @@ example {P Q : Prop} : P ∧ Q → Q ∧ P
 example {P Q : Prop} : P ∧ Q → Q ∧ P
   | ⟨l,r⟩ => ⟨r,l⟩
 example {P Q : Prop} : P ∧ Q → Q ∧ P := λ h =>
-  have hp : P := h.left
-  have hq : Q := h.right
-  ⟨hq,hp⟩
+  have l : P := h.left
+  have r : Q := h.right
+  ⟨r,l⟩
+
+
+#check And.elim
 
 
 -- отрицание --
 
-#print Not
-def Not₁ (P : Prop) : Prop := P → False
-
-example : ¬ False := fun x => x
-
-#check Not.elim
 #check False.elim
 
 -- ex falso quodlibet
 example : False → C := False.elim
 
+#print Not
+def Not₁ (P : Prop) : Prop := P → False
+
+example : ¬ False := fun x => x
+example : ¬ False := id
+
+#check Not.elim
 #check absurd
 -- absurd можно доказать
 example {P : Prop} {C : Sort u} (h₁ : P) (h₂ : ¬P) : C := sorry
@@ -142,23 +144,28 @@ example : True ∨ False := .inl trivial
 
 example {P Q : Prop} (h : P ∨ Q) : Q ∨ P := sorry
 
+
+
+
+example {P Q : Prop} : (h : P ∨ Q) → Q ∨ P
+  | .inl p => .inr p
+  | .inr q => .inl q
+
+example {P Q : Prop} (h : P ∨ Q) : Q ∨ P :=
+  match h with
+  | .inl p => .inr p
+  | .inr q => .inl q
+
+
 #check Or.elim
-
-
-
-
-
-example {P Q : Prop} (h : P ∨ Q) : Q ∨ P := Or.elim h .inr .inl
 
 example {P Q : Prop} (h : P ∨ Q) : Q ∨ P :=
   Or.elim h
     (fun hp : P => Or.inr hp)
     (fun hq : Q => Or.inl hq)
 
-example {P Q : Prop} (h : P ∨ Q) : Q ∨ P :=
-  match h with
-  | .inl p => .inr p
-  | .inr q => .inl q
+example {P Q : Prop} (h : P ∨ Q) : Q ∨ P := Or.elim h .inr .inl
+
 
 
 -- iff --

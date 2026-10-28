@@ -126,6 +126,18 @@ inductive True₁ : Prop where
 
 -/
 
+-- Каррирование и частичное применение
+def rep : Nat → String → String
+| 0, _ => ""
+| n+1, s => s.append (rep n s)
+#eval rep 2 "uv"
+#eval rep 5 "jjj+"
+
+def rep2 : String → String :=  rep 2
+def rep5 : String → String :=  rep 5
+#eval rep2 "uv"
+#eval rep5 "jjj+"
+
 
 -- Функции определяются двумя способами.
 
@@ -149,7 +161,7 @@ def add₁ : Nat → Nat → Nat             -- Сначала декларир�
 | zero,   zero   => zero               -- Затем указывается значение на всех возможных
 | zero,   succ n => succ n             -- конструкторах типа Nat
 | succ n, zero   => succ n
-| succ n, succ m => succ (add₁ n (succ m))
+| succ n, succ m => succ (add₁ n (succ m))   -- n+1, m+1 => (add₁ n (m+1))+1
 
 -- Строго говоря, в определении могут стоять не конструкторы, а шаблоны (patterns).
 -- Например, шаблон _ обозначает "неважно какое значение", а любой идентификатор,
@@ -157,7 +169,7 @@ def add₁ : Nat → Nat → Nat             -- Сначала декларир�
 -- Поэтому определение выше можно было бы записать и так:
 
 def add₂ : Nat → Nat → Nat
-| zero,   x      => x               -- здесь n -- переменная
+| zero,   x      => x               -- здесь x -- переменная
 | succ n, zero   => succ n
 | succ n, succ m => succ (add₂ n (succ m))
 
@@ -273,3 +285,15 @@ namespace ns1
     := «столица»
 
 end ns1
+
+
+-- Равенство
+
+#print Eq
+inductive Eq₁ : α → α → Prop where
+  | refl (a : α) : Eq₁ a a
+
+#print rfl
+theorem rfl₁ {α : Sort u} {a : α} : Eq a a := Eq.refl a
+
+example : 2 + 3 = 5 := rfl

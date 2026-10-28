@@ -23,8 +23,7 @@ example : Nat := zero
 example (x : Nat) : Nat := succ x
 
 -- Ax.3
-theorem Ax3 : ∀ x y : Nat, succ x = succ y → x = y := λ x y p =>
-  match x, y, p with
+theorem Ax3 : ∀ x y : Nat, succ x = succ y → x = y
   | zero, zero, rfl => rfl
   | succ n, _, rfl => rfl
 #print Ax3
