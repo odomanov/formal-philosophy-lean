@@ -191,6 +191,16 @@ open Nat in
 example (n : Nat) (h : n ≠ 0) : (succ (pred n)) = n := sorry
 
 
+
+
+
+open Nat in
+example (n : Nat) (h : n ≠ 0) : (succ (pred n)) = n := by
+  cases n
+  · contradiction
+  · simp
+
+
 -- cases со сложными выражениями.
 -- Nat.lt_or_ge (n m : Nat) : n < m ∨ n ≥ m
 example (p : Prop) (m n : Nat)
@@ -253,7 +263,7 @@ example (h : Nat.succ n = Nat.succ m) : n = m := by injection h
 
 example (h : 2 + 2 = 3) : p := by contradiction
 example (h : p) (h' : ¬ p) : q := by contradiction
-example (x : Nat) (h : x ≠ x) : p := by contradiction
+example (x : α) (h : x ≠ x) : p := by contradiction
 
 
 -- комбинаторы тактик ------------------------
@@ -351,7 +361,7 @@ example (p q r : Prop) (hp : p) (hq : q) : p ∧ (q ∨ r) := by
 
 example (u w x y z : Nat) (h₁ : x = y + z) (h₂ : w = u + x)
         : w = z + y + u := by
-  simp [*, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+  simp [*]
 
 
 -- generalize
