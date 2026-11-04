@@ -55,6 +55,9 @@ inductive Nat₂ : Type where
   | zero : Nat₂
   | succ (n : Nat₂) : Nat₂
 
+inductive Nat₃ : Type where
+  | zero | succ (n : Nat₃)
+
 #check Nat.zero
 
 -- без префикса имя не опознаётся
@@ -69,9 +72,6 @@ inductive People where
 | Bill : People
 
 inductive People₁ where | Mary | John | Bill
-
-inductive Nat₃ where
-| zero | succ (n : Nat₃)
 
 
 -- Как видно, конструкторы имеют тип в качестве области значения. То есть они
