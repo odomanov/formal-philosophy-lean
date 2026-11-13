@@ -26,7 +26,7 @@ def King : Time → Type := λ t => {x : FrenchPeople // is_king_at x t}
 #check King
 
 -- тип нынешних королей
-def PresentKing := King t0
+def PresentKing := King t0      -- { x // is_king_at x t0 }
 #check PresentKing
 
 

@@ -2,23 +2,6 @@
 
 namespace Logic
 
--------------------------------------
---== Пропозициональное равенство ==--
-
-#print Eq
-inductive Eq₁ : α → α → Prop where
-  | refl (a : α) : Eq₁ a a
-
-#print rfl
-theorem rfl₁ {α : Sort u} {a : α} : Eq a a := Eq.refl a
-
-example : 2 + 3 = 5 := rfl
-
--- равенство функций
-def f1 : Nat → Nat := λ n => n + 2
-def f2 : Nat → Nat := (. + 2)
-example : f2 = f1 := rfl
-
 ----------------------------------
 --== пропозициональная логика ==--
 
@@ -207,6 +190,7 @@ theorem and_swap''''' {P Q : Prop} : P ∧ Q ↔ Q ∧ P :=
 example {P Q : Prop} : (P ↔ Q) → Q → P := sorry
 
 
+example {P Q : Prop} : (P ↔ Q) → Q → P := λ h hq => h.mpr hq
 
 -------------------------------------
 --== Пропозициональное равенство ==--
@@ -234,7 +218,7 @@ example : ∀ {a b c : α}, a = b → b = c → a = c := sorry
 -- равенство это эквивалентность:
 theorem refl : ∀ {a : α}, a = a := rfl
 theorem symm : ∀ {a b : α}, a = b → b = a := λ x => x ▸ rfl
-theorem trans : ∀ {a b c : α}, a = b → b = c → a = c := λ ab bc => bc ▸ ab ▸ rfl
+theorem trans : ∀ {a b c : α}, a = b → b = c → a = c := λ ab bc => bc ▸ ab
 
 #check Eq.refl
 #check Eq.symm
