@@ -26,6 +26,7 @@ example (x : Nat) : Nat := succ x
 theorem Ax3 : ∀ x y : Nat, succ x = succ y → x = y
   | zero, zero, rfl => rfl
   | succ n, _, rfl => rfl
+  -- | succ n, .(succ n), rfl => rfl
 #print Ax3
 
 theorem Ax3b : ∀ x y : Nat, succ x = succ y → x = y
@@ -54,9 +55,9 @@ theorem Ax5 : (P : Nat → Prop)
   → P zero
   → (∀ n : Nat, P n → P (succ n))
   → ∀ m : Nat, P m
-  := λ P p0 pn m =>
-    match P, p0, pn, m with
-    | _, z, _, zero => z
-    | P, z, f, succ m => f m (Ax5 P z f m)
+  := fun P p0 pn m =>
+    match m with
+    | zero => p0
+    | succ m => pn m (Ax5 P p0 pn m)
 
 #print Nat.rec
